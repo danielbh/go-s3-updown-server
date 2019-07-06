@@ -1,8 +1,9 @@
 # go-s3-updown-server
 
-### Goal: Demo for how to upload and download files to s3 via a a golang web server.
+### Demo for how to upload and download files to s3 via a a golang web server.
 
-### Tasks
+### Tasks:
+
 - [ ] create basic webpage for webserver to upload and download files locally
   - [ ] upload
     - [ ] create form 
