@@ -5,9 +5,10 @@
 ### Tasks:
 
 - [ ] create basic webpage for webserver to upload and download files locally
-  - [ ] upload
-    - [ ] create form 
-    - [ ] create handling request
+  - [x] upload
+    - [x] create form
+    - [x] create handling request
+	- [x] save file
   - [ ] download
     - [ ] create table to display all files in server. click on them to download.
 - [ ] upload and download to s3 instead of locally
@@ -18,4 +19,4 @@
 - [ ] provision bucket
    - [ ] create terrform for bucket and keep it in repo
 - [ ] Write blog entry
-    
+
