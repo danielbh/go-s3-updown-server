@@ -14,6 +14,7 @@
   - [ ] how to upload from bucket?
   - [ ] how to download from bucket?
   - [ ] how to do file structure?
+- [ ] write how to deploy the server... fargate would be cool
 - [ ] provision bucket
    - [ ] create terrform for bucket and keep it in repo
 - [ ] Write blog entry
