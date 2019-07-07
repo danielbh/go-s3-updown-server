@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -98,24 +99,14 @@ func main() {
 	router.LoadHTMLGlob("html/*")
 
 	router.GET("/download/:filename", func(ctx *gin.Context) {
-		// If this was a real application this should have more security and and santization
-		// file.Filename SHOULD NOT be trusted. See Content-Disposition on MDN and
-		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition#Directives
-
 		filename := ctx.Param("filename")
 		file, downloadErr := getFile(filename)
-
 		if downloadErr != nil {
 			ctx.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", downloadErr.Error()))
 			return
 		}
-
-		ctx.Header("Content-Description", "File Transfer")
-		ctx.Header("Content-Transfer-Encoding", "binary")
 		ctx.Header("Content-Disposition", "attachment; filename="+filename)
-		ctx.Header("Content-Type", "application/octet-stream")
-
-		ctx.File(file)
+		io.Copy(ctx.Writer, strings.NewReader(file))
 	})
 
 	router.POST("/upload", func(ctx *gin.Context) {

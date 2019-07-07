@@ -17,18 +17,19 @@
   - [x] upload file in local filesystem authenticated in script [aws-sdk-go-docs](https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/s3/s3_upload_object.go)
   - [x] successfully upload file authenticated without saving to local filesystem
 - [x] show list of files in s3 bucket [aws-sdk-go-docs](https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/s3/s3_list_objects.go)
-- [ ] download file from s3 bucket without saving to local file system. Difficult to do given it's not documented and I'll need to do something custom I think.
-	- [ ] Might need to create a temporary file... https://yourbasic.org/golang/temporary-file-directory/
-	- [ ] https://stackoverflow.com/questions/24116147/golang-how-to-download-file-in-browser-from-golang-server
+- [x] download file from s3 bucket without saving to local file system.
 - [ ] refactor for DRY
+- [ ] document how download works
+- [ ] PR to keep abstraction layer in gin gonic with download endpoint
 - [ ] write how to deploy the server... fargate would be cool
 - [ ] provision bucket
    - [ ] create terrform for bucket and keep it in repo
 - [ ] Add name and uploaded date
+- [ ] add drag and drop
 - [ ] Write blog entry
 - [ ] research the following fields
   - [ ] ContentLength:        aws.Int64(size)
   - [ ] ContentType:          aws.String(http.DetectContentType(buffer))
   - [ ] ContentDisposition:   aws.String("attachment")
   - [ ] ServerSideEncryption: aws.String("AES256")
-
+- [ ] [Filename SHOULD NOT be trusted. See Content-Disposition on MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition#Directives)
