@@ -10,8 +10,8 @@
     - [x] create handling request
 	- [x] save file
   - [x] download
-		- [x] create url that will download via link
-		- [x] create routing to download
+    - [x] create url that will download via link
+    - [x] create routing to download
 - [ ] upload file to s3 bucket
 - [ ] download file from s3 bucket
 - [ ] write how to deploy the server... fargate would be cool
