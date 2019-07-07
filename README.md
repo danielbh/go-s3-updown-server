@@ -17,7 +17,9 @@
   - [x] upload file in local filesystem authenticated in script [aws-sdk-go-docs](https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/s3/s3_upload_object.go)
   - [x] successfully upload file authenticated without saving to local filesystem
 - [x] show list of files in s3 bucket [aws-sdk-go-docs](https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/s3/s3_list_objects.go)
-- [ ] download file from s3 bucket without saving to local file system. Might need to create a temporary file... https://yourbasic.org/golang/temporary-file-directory/
+- [ ] download file from s3 bucket without saving to local file system.
+      - [ ] Might need to create a temporary file... https://yourbasic.org/golang/temporary-file-directory/
+      - [ ] https://stackoverflow.com/questions/24116147/golang-how-to-download-file-in-browser-from-golang-server
 - [ ] refactor for DRY
 - [ ] write how to deploy the server... fargate would be cool
 - [ ] provision bucket
