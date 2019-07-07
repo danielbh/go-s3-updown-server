@@ -3,9 +3,11 @@
 #### Demo for how to upload and download files to s3 via a a golang web server.
 
 ### TODO:
-- [ ] refactor for DRY
-- [ ] document how download works
-- [ ] PR to keep abstraction layer in gin gonic with download endpoint
+- [ ] refactor and clean up
+  - [ ] create s3 package to abstract
+  - [ ] share session between s3 calls
+  - [ ] document how download works
+  - [ ] PR to keep abstraction layer in gin gonic with download endpoint
 - [ ] write how to deploy the server... fargate would be cool
 - [ ] provision bucket
    - [ ] create terrform for bucket and keep it in repo
