@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -18,6 +19,36 @@ const (
 	S3_BUCKET = ""
 )
 
+func getFile(filename string) (string, error) {
+	sess, sessionErr := session.NewSession(&aws.Config{
+		Region: aws.String(S3_REGION)},
+	)
+	if sessionErr != nil {
+		fmt.Println("Error Creating aws session: ", sessionErr)
+	}
+
+	svc := s3.New(sess)
+
+	results, getFileErr := svc.GetObject(&s3.GetObjectInput{
+		Bucket: aws.String(S3_BUCKET),
+		Key:    aws.String(filename),
+	})
+
+	if getFileErr != nil {
+		// fmt.Println("Unable to download item %s, %s", filename, getFileErr.Error())
+	}
+
+	defer results.Body.Close()
+
+	buf := bytes.NewBuffer(nil)
+
+	if _, err := io.Copy(buf, results.Body); err != nil {
+		return "", err
+	}
+
+	return string(buf.Bytes()), nil
+}
+
 func listFiles() []*s3.Object {
 	sess, sessionErr := session.NewSession(&aws.Config{
 		Region: aws.String(S3_REGION)},
@@ -30,13 +61,13 @@ func listFiles() []*s3.Object {
 	svc := s3.New(sess)
 	fileList, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{Bucket: aws.String(S3_BUCKET)})
 	if err != nil {
-		fmt.Println("Unable to list items in bucket %s, %v", S3_BUCKET, err)
+		// fmt.Println("Unable to list items in bucket %s, %v", S3_BUCKET, err)
 	}
 
 	return fileList.Contents
 }
 
-func upload(filename string, reader io.Reader) {
+func saveFile(filename string, reader io.Reader) {
 	sess, sessionErr := session.NewSession(&aws.Config{
 		Region: aws.String(S3_REGION)},
 	)
@@ -66,23 +97,25 @@ func main() {
 	router.MaxMultipartMemory = 8 << 20 // 8 MiB
 	router.LoadHTMLGlob("html/*")
 
-	router.GET("/", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "index.tmpl", map[string]interface{}{
-			"files": listFiles(),
-		})
-	})
-
 	router.GET("/download/:filename", func(ctx *gin.Context) {
-		uploadsPath := "./uploads/"
-		fileName := ctx.Param("filename")
-		// If this was a real application this should have more security and validation
-		targetPath := filepath.Join(uploadsPath, fileName)
-		fmt.Printf("file: %s", targetPath)
+		// If this was a real application this should have more security and and santization
+		// file.Filename SHOULD NOT be trusted. See Content-Disposition on MDN and
+		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition#Directives
+
+		filename := ctx.Param("filename")
+		file, downloadErr := getFile(filename)
+
+		if downloadErr != nil {
+			ctx.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", downloadErr.Error()))
+			return
+		}
+
 		ctx.Header("Content-Description", "File Transfer")
 		ctx.Header("Content-Transfer-Encoding", "binary")
-		ctx.Header("Content-Disposition", "attachment; filename="+fileName)
+		ctx.Header("Content-Disposition", "attachment; filename="+filename)
 		ctx.Header("Content-Type", "application/octet-stream")
-		ctx.File(targetPath)
+
+		ctx.File(file)
 	})
 
 	router.POST("/upload", func(ctx *gin.Context) {
@@ -99,10 +132,17 @@ func main() {
 				ctx.String(http.StatusInternalServerError, fmt.Sprintf("get form err: %s", err.Error()))
 				return
 			}
-			upload(fileHeader.Filename, reader)
+			saveFile(fileHeader.Filename, reader)
 		}
 
 		ctx.Redirect(http.StatusFound, "/")
 	})
+
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "index.tmpl", map[string]interface{}{
+			"files": listFiles(),
+		})
+	})
+
 	router.Run("localhost:8080")
 }
