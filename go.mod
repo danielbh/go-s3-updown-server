@@ -3,6 +3,7 @@ module github.com/danielbh/go-s3-updown-server
 go 1.12
 
 require (
+	github.com/aws/aws-sdk-go v1.20.15
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect

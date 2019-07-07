@@ -12,10 +12,8 @@
   - [x] download
 		- [x] create url that will download via link
 		- [x] create routing to download
-- [ ] upload and download to s3 instead of locally
-  - [ ] how to upload from bucket?
-  - [ ] how to download from bucket?
-  - [ ] how to do file structure?
+- [ ] upload file to s3 bucket
+- [ ] download file from s3 bucket
 - [ ] write how to deploy the server... fargate would be cool
 - [ ] provision bucket
    - [ ] create terrform for bucket and keep it in repo
