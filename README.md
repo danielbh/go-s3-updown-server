@@ -14,7 +14,7 @@
     - [x] create routing to download
 - [ ] upload file to s3 bucket
   - [ ] create bucket with authentication
-  - [ ] successfully upload file without saving to local filesystem
+  - [ ] successfully upload file authenticated without saving to local filesystem
 - [ ] download file from s3 bucket
 - [ ] write how to deploy the server... fargate would be cool
 - [ ] provision bucket
