@@ -13,7 +13,7 @@
     - [x] create url that will download via link
     - [x] create routing to download
 - [ ] upload file to s3 bucket
-  - [ ] create bucket with authentication
+  - [ ] create bucket with authentication [great article](https://github.com/keithweaver/python-aws-s3)
   - [ ] successfully upload file authenticated without saving to local filesystem
 - [ ] download file from s3 bucket
 - [ ] write how to deploy the server... fargate would be cool
