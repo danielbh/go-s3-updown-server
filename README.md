@@ -16,8 +16,9 @@
   - [x] create bucket with authentication [great article](https://github.com/keithweaver/python-aws-s3)
   - [x] upload file in local filesystem authenticated in script [aws-sdk-go-docs](https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/s3/s3_upload_object.go)
   - [x] successfully upload file authenticated without saving to local filesystem
-- [ ] show list of files in s3 bucket
+- [x] show list of files in s3 bucket [aws-sdk-go-docs](https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/s3/s3_list_objects.go)
 - [ ] download file from s3 bucket
+- [ ] refactor for DRY
 - [ ] write how to deploy the server... fargate would be cool
 - [ ] provision bucket
    - [ ] create terrform for bucket and keep it in repo

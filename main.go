@@ -8,51 +8,59 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/gin-gonic/gin"
 )
-
-type fileMetadata struct {
-	Filename string
-}
 
 const (
 	S3_REGION = ""
 	S3_BUCKET = ""
 )
 
-func getFiles() []fileMetadata {
-	files := make([]fileMetadata, 0)
+func listFiles() []*s3.Object {
+	sess, sessionErr := session.NewSession(&aws.Config{
+		Region: aws.String(S3_REGION)},
+	)
 
-	files = append(files, fileMetadata{
-		Filename: "test.txt",
-	})
+	if sessionErr != nil {
+		fmt.Println("Error Creating aws session: ", sessionErr)
+	}
 
-	return files
+	svc := s3.New(sess)
+	fileList, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{Bucket: aws.String(S3_BUCKET)})
+	if err != nil {
+		fmt.Println("Unable to list items in bucket %s, %v", S3_BUCKET, err)
+	}
+
+	return fileList.Contents
 }
 
-// func download()
-
 func upload(filename string, reader io.Reader) {
-	conf := aws.Config{Region: aws.String(S3_REGION)}
-	sess := session.New(&conf)
+	sess, sessionErr := session.NewSession(&aws.Config{
+		Region: aws.String(S3_REGION)},
+	)
 	svc := s3manager.NewUploader(sess)
 
+	if sessionErr != nil {
+		fmt.Println("Error Creating aws session: ", sessionErr)
+	}
+
 	fmt.Println("Uploading file to S3...")
-	result, err := svc.Upload(&s3manager.UploadInput{
+	result, uploadError := svc.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(S3_BUCKET),
 		Key:    aws.String(filepath.Base(filename)),
 		Body:   reader,
 	})
-	if err != nil {
-		fmt.Println("error", err)
+
+	if uploadError != nil {
+		fmt.Println("Upload Error: ", uploadError)
 	}
 
 	fmt.Printf("Successfully uploaded %s to %s\n", filename, result.Location)
 }
 
 func main() {
-	session.NewSession(&aws.Config{Region: aws.String(S3_REGION)})
 	router := gin.Default()
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router.MaxMultipartMemory = 8 << 20 // 8 MiB
@@ -60,7 +68,7 @@ func main() {
 
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "index.tmpl", map[string]interface{}{
-			"files": getFiles(),
+			"files": listFiles(),
 		})
 	})
 
@@ -78,7 +86,6 @@ func main() {
 	})
 
 	router.POST("/upload", func(ctx *gin.Context) {
-		// Multipart form
 		form, err := ctx.MultipartForm()
 		if err != nil {
 			ctx.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))

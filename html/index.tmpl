@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Upload Files</title>
+	<title>DIY Dropbox</title>
 	<style>
 		table {
 			font-family: arial, sans-serif;
@@ -22,7 +22,7 @@
 	</style>
 </head>
 <body>
-<h1>Upload multiple files with fields</h1>
+<h1>Up/Down Server</h1>
 
 <form action="/upload" method="post" enctype="multipart/form-data">
     Files: <input type="file" name="files" multiple><br><br>
@@ -34,14 +34,16 @@
 	<table>
 		<tr>
 			<th>Filename</th>
-			<th>Email</th>
+			<th>Last Modified</th>
+			<th>Size</th>
 			<th></th>
 		</tr>
 		{{range .files}}
 			<tr>
-				<td>{{.Filename}}</td>
-				<td>test@test.com</td>
-				<td><a href="/download/{{.Filename}}">Download</a></td>
+				<td>{{.Key}}</td>
+				<td>{{.LastModified}}</td>
+				<td>{{.Size}}</td>
+				<td><a href="/download/{{.Key}}">Download</a></td>
 			</tr>
 		{{end}}
 	</table>
