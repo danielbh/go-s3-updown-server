@@ -2,15 +2,24 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/gin-gonic/gin"
 )
 
 type fileMetadata struct {
 	Filename string
 }
+
+const (
+	S3_REGION = ""
+	S3_BUCKET = ""
+)
 
 func getFiles() []fileMetadata {
 	files := make([]fileMetadata, 0)
@@ -22,7 +31,28 @@ func getFiles() []fileMetadata {
 	return files
 }
 
+// func download()
+
+func upload(filename string, reader io.Reader) {
+	conf := aws.Config{Region: aws.String(S3_REGION)}
+	sess := session.New(&conf)
+	svc := s3manager.NewUploader(sess)
+
+	fmt.Println("Uploading file to S3...")
+	result, err := svc.Upload(&s3manager.UploadInput{
+		Bucket: aws.String(S3_BUCKET),
+		Key:    aws.String(filepath.Base(filename)),
+		Body:   reader,
+	})
+	if err != nil {
+		fmt.Println("error", err)
+	}
+
+	fmt.Printf("Successfully uploaded %s to %s\n", filename, result.Location)
+}
+
 func main() {
+	session.NewSession(&aws.Config{Region: aws.String(S3_REGION)})
 	router := gin.Default()
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router.MaxMultipartMemory = 8 << 20 // 8 MiB
@@ -56,12 +86,13 @@ func main() {
 		}
 		files := form.File["files"]
 
-		for _, file := range files {
-			filename := filepath.Join("./uploads", filepath.Base(file.Filename))
-			if err := ctx.SaveUploadedFile(file, filename); err != nil {
-				ctx.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		for _, fileHeader := range files {
+			reader, err := fileHeader.Open()
+			if err != nil {
+				ctx.String(http.StatusInternalServerError, fmt.Sprintf("get form err: %s", err.Error()))
 				return
 			}
+			upload(fileHeader.Filename, reader)
 		}
 
 		ctx.Redirect(http.StatusFound, "/")
