@@ -13,6 +13,8 @@
     - [x] create url that will download via link
     - [x] create routing to download
 - [ ] upload file to s3 bucket
+  - [ ] create bucket with authentication
+  - [ ] successfully upload file without saving to local filesystem
 - [ ] download file from s3 bucket
 - [ ] write how to deploy the server... fargate would be cool
 - [ ] provision bucket
